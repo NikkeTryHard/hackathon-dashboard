@@ -68,8 +68,8 @@ const config: Config = {
       },
       keyframes: {
         glow: {
-          "0%": { boxShadow: "0 0 5px rgba(0, 255, 0, 0.2)" },
-          "100%": { boxShadow: "0 0 20px rgba(0, 255, 0, 0.4)" },
+          "0%": { boxShadow: "0 0 5px rgba(212, 168, 83, 0.2)" },
+          "100%": { boxShadow: "0 0 20px rgba(212, 168, 83, 0.4)" },
         },
       },
     },
