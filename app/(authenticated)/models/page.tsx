@@ -53,46 +53,48 @@ export default function ModelsPage() {
   );
 
   const providerInfo = {
-    claude: { label: "Anthropic Claude", icon: Brain, color: "text-neon-purple" },
-    gemini: { label: "Google Gemini", icon: Sparkles, color: "text-neon-cyan" },
-    gpt: { label: "OpenAI GPT", icon: Zap, color: "text-neon-green" },
-    other: { label: "Other", icon: Cpu, color: "text-gray-400" },
+    claude: { label: "Anthropic Claude", icon: Brain, color: "text-info" },
+    gemini: { label: "Google Gemini", icon: Sparkles, color: "text-gold" },
+    gpt: { label: "OpenAI GPT", icon: Zap, color: "text-success" },
+    other: { label: "Other", icon: Cpu, color: "text-text-ghost" },
   };
 
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="flex items-center justify-between">
-        <div>
+    <div className="space-y-8">
+      <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="flex items-center justify-between">
+        <div className="space-y-1">
           <div className="flex items-center gap-3">
-            <Cpu className="w-6 h-6 text-neon-purple" />
-            <h1 className="text-2xl font-bold">
-              <span className="text-gray-500">~/</span>
-              <span className="neon-green">models</span>
+            <div className="p-2 rounded-lg bg-info/10 border border-info/20">
+              <Cpu className="w-5 h-5 text-info" />
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight">
+              <span className="text-text-ghost">~/</span>
+              <span className="text-gold">models</span>
             </h1>
           </div>
-          <p className="text-sm text-gray-500 mt-1">{models.length} models available via Antigravity Manager</p>
+          <p className="text-sm text-text-tertiary">{models.length} models available via Antigravity Manager</p>
         </div>
 
-        <button onClick={fetchModels} disabled={isLoading} className="flex items-center gap-2 px-3 py-2 rounded-lg bg-dark-card border border-dark-border hover:border-neon-green/30 transition-colors disabled:opacity-50">
-          <RefreshCw className={`w-4 h-4 ${isLoading ? "animate-spin" : ""}`} />
-          <span className="text-sm">Refresh</span>
+        <button onClick={fetchModels} disabled={isLoading} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-surface-1 border border-border hover:border-gold/30 hover:bg-surface-2 transition-all disabled:opacity-50">
+          <RefreshCw className={`w-4 h-4 text-text-tertiary ${isLoading ? "animate-spin" : ""}`} />
+          <span className="text-sm text-text-secondary">Refresh</span>
         </button>
       </motion.div>
 
       {error && (
-        <div className="card p-4 border border-red-500/30 bg-red-500/10">
-          <p className="text-red-400">{error}</p>
+        <div className="surface-elevated p-4 border-error/20 bg-error/5">
+          <p className="text-error">{error}</p>
         </div>
       )}
 
       {isLoading && (
         <div className="flex items-center justify-center h-64">
-          <div className="w-8 h-8 border-2 border-neon-green/30 border-t-neon-green rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
         </div>
       )}
 
       {!isLoading && !error && (
-        <div className="space-y-8">
+        <div className="space-y-10">
           {(["claude", "gemini", "gpt", "other"] as const).map((provider) => {
             const providerModels = grouped[provider] || [];
             if (providerModels.length === 0) return null;
@@ -101,11 +103,11 @@ export default function ModelsPage() {
             const Icon = info.icon;
 
             return (
-              <motion.div key={provider} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                <div className="flex items-center gap-2 mb-4">
+              <motion.div key={provider} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
+                <div className="flex items-center gap-3 mb-4">
                   <Icon className={`w-5 h-5 ${info.color}`} />
-                  <h2 className="text-lg font-bold">{info.label}</h2>
-                  <span className="text-sm text-gray-500">({providerModels.length})</span>
+                  <h2 className="text-lg font-semibold text-text-primary">{info.label}</h2>
+                  <span className="badge">{providerModels.length}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {providerModels
