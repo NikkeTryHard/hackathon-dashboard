@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { UserKeyCard } from "@/components/UserKeyCard";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
+import { getRawApiKey } from "@/lib/api-utils";
 
 interface UserData {
   id: string;
@@ -23,19 +24,6 @@ export default function AdminPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Get raw API key from localStorage
-  const getRawApiKey = () => {
-    const rawKey = localStorage.getItem("hackathon-raw-key");
-    if (rawKey) return rawKey;
-
-    const stored = localStorage.getItem("hackathon-user");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      return parsed.apiKey || "";
-    }
-    return "";
-  };
 
   const fetchUsers = useCallback(async () => {
     try {
