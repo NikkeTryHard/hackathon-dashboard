@@ -32,22 +32,27 @@ export default function DashboardPage() {
   const { user } = useAuth();
 
   return (
-    <div className="space-y-6">
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold">
-          <span className="text-gray-500">~/</span>
-          <span className="neon-green cursor-blink">dashboard</span>
+    <div className="space-y-8">
+      {/* Header */}
+      <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="space-y-1">
+        <h1 className="text-2xl font-semibold tracking-tight">
+          <span className="text-text-ghost">~/</span>
+          <span className="text-gold">dashboard</span>
         </h1>
-        <p className="text-sm text-gray-500 mt-1">Welcome back, {user?.name}. Here&apos;s what&apos;s happening.</p>
+        <p className="text-sm text-text-tertiary">
+          Welcome back, <span className="text-text-secondary font-medium">{user?.name}</span>. Here&apos;s what&apos;s happening.
+        </p>
       </motion.div>
 
+      {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatsCard icon={Zap} label="Total Requests" value={MOCK_STATS.totalRequests.toLocaleString()} subtext="all time" color="green" />
-        <StatsCard icon={Activity} label="Active Today" value={MOCK_STATS.activeToday} subtext="crew members" color="cyan" />
-        <StatsCard icon={Cpu} label="Top Model" value={MOCK_STATS.topModel} subtext="most used" color="purple" />
-        <StatsCard icon={Clock} label="Uptime" value={MOCK_STATS.uptime} subtext="this week" color="green" />
+        <StatsCard icon={Zap} label="Total Requests" value={MOCK_STATS.totalRequests.toLocaleString()} subtext="all time" color="gold" delay={0} />
+        <StatsCard icon={Activity} label="Active Today" value={MOCK_STATS.activeToday} subtext="crew members" color="success" delay={0.05} />
+        <StatsCard icon={Cpu} label="Top Model" value={MOCK_STATS.topModel} subtext="most used" color="info" delay={0.1} />
+        <StatsCard icon={Clock} label="Uptime" value={MOCK_STATS.uptime} subtext="this week" color="success" delay={0.15} />
       </div>
 
+      {/* Two column layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <OnlineFriends friends={MOCK_FRIENDS} />
         <QuickLeaderboard entries={MOCK_LEADERBOARD} />
