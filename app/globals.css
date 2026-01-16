@@ -271,6 +271,61 @@ body {
     0 0 20px rgba(212, 168, 83, 0.05);
 }
 
+/* Badge - Refined */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  font-family: "Geist", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.badge-gold {
+  background: var(--gold-subtle);
+  color: var(--gold);
+  border-color: rgba(212, 168, 83, 0.2);
+}
+
+.badge-success {
+  background: var(--success-dim);
+  color: var(--success);
+  border-color: rgba(62, 207, 142, 0.2);
+}
+
+/* Status Indicators */
+.status-online {
+  width: 8px;
+  height: 8px;
+  background: var(--success);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(62, 207, 142, 0.5);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.status-offline {
+  width: 8px;
+  height: 8px;
+  background: var(--text-ghost);
+  border-radius: 50%;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(62, 207, 142, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 12px rgba(62, 207, 142, 0.7);
+  }
+}
+
 @keyframes blink {
   0%,
   50% {
