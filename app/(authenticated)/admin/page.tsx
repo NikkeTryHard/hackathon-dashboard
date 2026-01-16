@@ -78,14 +78,11 @@ export default function AdminPage() {
     setUsers([...users, newUser]);
     setNewUserName("");
     setIsCreating(false);
-
-    // TODO: Call your backend API to persist
   };
 
   const handleDeleteUser = (id: string) => {
     if (confirm("Are you sure? This will revoke their access.")) {
       setUsers(users.filter((u) => u.id !== id));
-      // TODO: Call your backend API to delete
     }
   };
 
