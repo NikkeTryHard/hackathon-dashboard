@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${jetbrainsMono.variable} font-mono antialiased bg-dark-bg`}>
+      <body className={`${jetbrainsMono.variable} font-mono antialiased bg-void`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
