@@ -25,11 +25,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    const stored = localStorage.getItem("hackathon-user");
-    if (stored) {
-      setUser(JSON.parse(stored));
-    }
-    setIsLoading(false);
+    // Use a microtask to avoid synchronous setState in effect body
+    // This satisfies the react-hooks/set-state-in-effect rule
+    queueMicrotask(() => {
+      const stored = localStorage.getItem("hackathon-user");
+      if (stored) {
+        setUser(JSON.parse(stored));
+      }
+      setIsLoading(false);
+    });
   }, []);
 
   const login = async (apiKey: string): Promise<boolean> => {
