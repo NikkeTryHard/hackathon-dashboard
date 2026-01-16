@@ -36,6 +36,8 @@
   --error-dim: rgba(239, 95, 95, 0.15);
   --info: #6b8afd;
   --info-dim: rgba(107, 138, 253, 0.15);
+  --warning: #f59e0b;
+  --warning-dim: rgba(245, 158, 11, 0.15);
 
   /* Legacy mappings for compatibility */
   --bg-primary: var(--void);

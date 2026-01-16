@@ -31,6 +31,7 @@ const config: Config = {
         success: "#3ecf8e",
         error: "#ef5f5f",
         info: "#6b8afd",
+        warning: "#f59e0b",
         // Keep obsidian for backward compat
         obsidian: {
           50: "#fafafa",
