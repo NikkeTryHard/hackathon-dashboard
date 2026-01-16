@@ -38,15 +38,6 @@
   --info-dim: rgba(107, 138, 253, 0.15);
   --warning: #f59e0b;
   --warning-dim: rgba(245, 158, 11, 0.15);
-
-  /* Legacy mappings for compatibility */
-  --bg-primary: var(--void);
-  --bg-elevated: var(--surface-0);
-  --bg-surface: var(--surface-1);
-  --border-subtle: var(--border-dim);
-  --border-default: var(--border);
-  --accent: var(--gold);
-  --accent-dim: var(--gold-dim);
 }
 
 body {
@@ -92,22 +83,6 @@ body {
     0 2px 4px rgba(0, 0, 0, 0.4),
     0 8px 24px rgba(0, 0, 0, 0.4),
     0 0 0 1px rgba(255, 255, 255, 0.03);
-}
-
-/* Legacy compat */
-.surface {
-  background: var(--surface-0);
-  border: 1px solid var(--border-dim);
-  border-radius: 12px;
-}
-
-.surface-raised {
-  background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.4),
-    0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .surface-gold {
