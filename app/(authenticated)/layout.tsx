@@ -19,8 +19,8 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="w-8 h-8 border-2 border-neon-green/30 border-t-neon-green rounded-full animate-spin" />
+      <div className="flex items-center justify-center min-h-screen bg-void">
+        <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
       </div>
     );
   }
@@ -31,7 +31,7 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
     <PresenceProvider>
       <Navbar />
       <Sidebar />
-      <main className="ml-56 mt-14 p-6 min-h-screen">{children}</main>
+      <main className="ml-56 mt-14 p-6 min-h-screen bg-void">{children}</main>
     </PresenceProvider>
   );
 }
