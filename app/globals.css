@@ -241,6 +241,36 @@ body {
   border-color: var(--gold);
 }
 
+/* Input Field - Refined */
+.input-field {
+  width: 100%;
+  background: var(--surface-0);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.input-field::placeholder {
+  color: var(--text-ghost);
+}
+
+.input-field:hover:not(:focus) {
+  border-color: var(--border-bright);
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: var(--gold);
+  background: var(--surface-1);
+  box-shadow:
+    0 0 0 3px var(--gold-glow),
+    0 0 20px rgba(212, 168, 83, 0.05);
+}
+
 @keyframes blink {
   0%,
   50% {
