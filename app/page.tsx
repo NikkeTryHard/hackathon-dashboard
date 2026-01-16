@@ -1,7 +1,29 @@
-import { redirect } from "next/navigation";
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function Home() {
-  // Redirect to the authenticated dashboard
-  // The (authenticated) layout will handle redirecting to /login if not authenticated
-  redirect("/login");
+  const { user, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (user) {
+        // User is logged in, go to dashboard
+        router.replace("/dashboard");
+      } else {
+        // Not logged in, go to login
+        router.replace("/login");
+      }
+    }
+  }, [user, isLoading, router]);
+
+  // Show loading while checking auth
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-dark-bg">
+      <div className="w-8 h-8 border-2 border-neon-green/30 border-t-neon-green rounded-full animate-spin" />
+    </div>
+  );
 }
