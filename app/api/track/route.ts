@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
       data: {
         userId: user.id,
         model: model,
-        tokens: tokens || 0,
+        tokens: typeof tokens === "number" && tokens >= 0 ? Math.floor(tokens) : 0,
       },
     });
 
