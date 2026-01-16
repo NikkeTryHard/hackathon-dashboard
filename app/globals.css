@@ -87,14 +87,71 @@ body {
     0 0 20px var(--neon-cyan);
 }
 
+/* Surface Hierarchy - 3 levels of depth */
+.surface-base {
+  background: var(--surface-0);
+  border: 1px solid var(--border-dim);
+  border-radius: 12px;
+}
+
+.surface-elevated {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.surface-floating {
+  background: var(--surface-2);
+  border: 1px solid var(--border-bright);
+  border-radius: 12px;
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 8px 24px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+/* Legacy compat */
+.surface {
+  background: var(--surface-0);
+  border: 1px solid var(--border-dim);
+  border-radius: 12px;
+}
+
+.surface-raised {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.surface-gold {
+  background: var(--gold-subtle);
+  border: 1px solid rgba(212, 168, 83, 0.2);
+  border-radius: 12px;
+}
+
+.surface-gold-glow {
+  background: var(--gold-subtle);
+  border: 1px solid rgba(212, 168, 83, 0.25);
+  border-radius: 12px;
+  box-shadow:
+    0 0 20px var(--gold-glow),
+    0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
 .card {
-  background: var(--dark-card);
-  border: 1px solid var(--dark-border);
-  border-radius: 8px;
+  background: var(--surface-0);
+  border: 1px solid var(--border-dim);
+  border-radius: 12px;
 }
 
 .card-glow {
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 20px var(--gold-glow);
 }
 
 @keyframes blink {
