@@ -22,22 +22,27 @@ export function Sidebar() {
   const items = user?.isAdmin ? [...navItems, ...adminItems] : navItems;
 
   return (
-    <aside className="fixed left-0 top-14 bottom-0 w-56 bg-dark-card border-r border-dark-border p-4 z-50">
-      <nav className="space-y-2">
+    <aside className="fixed left-0 top-14 bottom-0 w-56 bg-surface-0/60 backdrop-blur-sm border-r border-border-dim z-50 flex flex-col">
+      {/* Navigation */}
+      <nav className="flex-1 p-4 space-y-1">
         {items.map((item) => {
           const isActive = pathname === item.href;
           return (
-            <Link key={item.href} href={item.href} className={cn("flex items-center gap-3 px-3 py-2 rounded-lg font-mono text-sm transition-all", isActive ? "bg-neon-green/10 text-neon-green border border-neon-green/30" : "text-gray-400 hover:text-gray-200 hover:bg-dark-border")}>
-              <item.icon className="w-4 h-4" />
+            <Link key={item.href} href={item.href} className={cn("flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150", isActive ? "bg-gold/10 text-gold border border-gold/20" : "text-text-tertiary hover:text-text-primary hover:bg-surface-1 border border-transparent")}>
+              <item.icon className={cn("w-4 h-4", isActive ? "text-gold" : "text-text-ghost")} />
               {item.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className="absolute bottom-4 left-4 right-4">
-        <div className="card p-3">
-          <div className="text-xs text-gray-500 mb-2">ONLINE NOW</div>
+      {/* Online section */}
+      <div className="p-4 border-t border-border-dim">
+        <div className="surface-base p-3">
+          <div className="flex items-center gap-2 mb-3">
+            <div className="status-online" />
+            <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-widest">Online</span>
+          </div>
           <div className="flex -space-x-2" id="online-avatars">
             {/* Populated by client */}
           </div>
