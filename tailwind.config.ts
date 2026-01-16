@@ -7,27 +7,20 @@ const config: Config = {
       colors: {
         // Luxury Terminal palette
         void: "#050506",
-        surface: {
-          0: "#0a0a0b",
-          1: "#111113",
-          2: "#1a1a1d",
-        },
-        border: {
-          dim: "#1f1f23",
-          DEFAULT: "#2a2a2f",
-          bright: "#3a3a42",
-        },
-        text: {
-          primary: "#fafafa",
-          secondary: "#a1a1a6",
-          tertiary: "#636369",
-          ghost: "#3a3a42",
-        },
-        gold: {
-          DEFAULT: "#d4a853",
-          bright: "#e8c06a",
-          dim: "#9a7b3d",
-        },
+        "surface-0": "#0a0a0b",
+        "surface-1": "#111113",
+        "surface-2": "#1a1a1d",
+        "border-dim": "#1f1f23",
+        "border-bright": "#3a3a42",
+        border: "#2a2a2f",
+        // Text colors - use 'txt' prefix to avoid conflict with Tailwind's text- utility
+        "text-primary": "#fafafa",
+        "text-secondary": "#a1a1a6",
+        "text-tertiary": "#636369",
+        "text-ghost": "#3a3a42",
+        gold: "#d4a853",
+        "gold-bright": "#e8c06a",
+        "gold-dim": "#9a7b3d",
         success: "#3ecf8e",
         error: "#ef5f5f",
         info: "#6b8afd",

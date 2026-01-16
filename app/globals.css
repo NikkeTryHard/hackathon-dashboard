@@ -1,8 +1,39 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@theme {
+  /* Luxury Terminal palette */
+  --color-void: #050506;
+  --color-surface-0: #0a0a0b;
+  --color-surface-1: #111113;
+  --color-surface-2: #1a1a1d;
+
+  /* Borders */
+  --color-border-dim: #1f1f23;
+  --color-border: #2a2a2f;
+  --color-border-bright: #3a3a42;
+
+  /* Text Hierarchy */
+  --color-text-primary: #fafafa;
+  --color-text-secondary: #a1a1a6;
+  --color-text-tertiary: #636369;
+  --color-text-ghost: #3a3a42;
+
+  /* Gold Accent */
+  --color-gold: #d4a853;
+  --color-gold-bright: #e8c06a;
+  --color-gold-dim: #9a7b3d;
+
+  /* Semantic */
+  --color-success: #3ecf8e;
+  --color-error: #ef5f5f;
+  --color-info: #6b8afd;
+  --color-warning: #f59e0b;
+
+  /* Fonts */
+  --font-sans: "Geist", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", monospace;
+}
 
 :root {
   /* Luxury Terminal - Deep Obsidian Base */
@@ -393,4 +424,169 @@ body {
 ::selection {
   background: rgba(212, 168, 83, 0.3);
   color: var(--text-primary);
+}
+
+/* ============================================
+   Tailwind 4 Utility Classes
+   Generated from CSS variables for compatibility
+   ============================================ */
+
+/* Background Colors */
+.bg-void {
+  background-color: var(--void) !important;
+}
+.bg-surface-0 {
+  background-color: var(--surface-0);
+}
+.bg-surface-1 {
+  background-color: var(--surface-1);
+}
+.bg-surface-2 {
+  background-color: var(--surface-2);
+}
+.bg-gold {
+  background-color: var(--gold);
+}
+.bg-gold-bright {
+  background-color: var(--gold-bright);
+}
+.bg-gold-dim {
+  background-color: var(--gold-dim);
+}
+.bg-success {
+  background-color: var(--success);
+}
+.bg-error {
+  background-color: var(--error);
+}
+.bg-info {
+  background-color: var(--info);
+}
+.bg-warning {
+  background-color: var(--warning);
+}
+
+/* Background with opacity */
+.bg-gold\/10 {
+  background-color: rgba(212, 168, 83, 0.1);
+}
+.bg-gold\/20 {
+  background-color: rgba(212, 168, 83, 0.2);
+}
+.bg-success\/10 {
+  background-color: rgba(62, 207, 142, 0.1);
+}
+.bg-success\/20 {
+  background-color: rgba(62, 207, 142, 0.2);
+}
+.bg-info\/10 {
+  background-color: rgba(107, 138, 253, 0.1);
+}
+.bg-info\/20 {
+  background-color: rgba(107, 138, 253, 0.2);
+}
+.bg-error\/10 {
+  background-color: rgba(239, 95, 95, 0.1);
+}
+.bg-error\/20 {
+  background-color: rgba(239, 95, 95, 0.2);
+}
+.bg-surface-0\/90 {
+  background-color: rgba(10, 10, 11, 0.9);
+}
+.bg-surface-0\/60 {
+  background-color: rgba(10, 10, 11, 0.6);
+}
+
+/* Text Colors */
+.text-text-primary {
+  color: var(--text-primary);
+}
+.text-text-secondary {
+  color: var(--text-secondary);
+}
+.text-text-tertiary {
+  color: var(--text-tertiary);
+}
+.text-text-ghost {
+  color: var(--text-ghost);
+}
+.text-gold {
+  color: var(--gold);
+}
+.text-gold-bright {
+  color: var(--gold-bright);
+}
+.text-gold-dim {
+  color: var(--gold-dim);
+}
+.text-success {
+  color: var(--success);
+}
+.text-error {
+  color: var(--error);
+}
+.text-info {
+  color: var(--info);
+}
+.text-warning {
+  color: var(--warning);
+}
+.text-void {
+  color: var(--void);
+}
+
+/* Border Colors */
+.border-border {
+  border-color: var(--border);
+}
+.border-border-dim {
+  border-color: var(--border-dim);
+}
+.border-border-bright {
+  border-color: var(--border-bright);
+}
+.border-gold {
+  border-color: var(--gold);
+}
+.border-gold\/10 {
+  border-color: rgba(212, 168, 83, 0.1);
+}
+.border-gold\/20 {
+  border-color: rgba(212, 168, 83, 0.2);
+}
+.border-success\/10 {
+  border-color: rgba(62, 207, 142, 0.1);
+}
+.border-success\/20 {
+  border-color: rgba(62, 207, 142, 0.2);
+}
+.border-info\/10 {
+  border-color: rgba(107, 138, 253, 0.1);
+}
+.border-error\/10 {
+  border-color: rgba(239, 95, 95, 0.1);
+}
+
+/* Hover States */
+.hover\:text-text-primary:hover {
+  color: var(--text-primary);
+}
+.hover\:text-gold:hover {
+  color: var(--gold);
+}
+.hover\:bg-surface-1:hover {
+  background-color: var(--surface-1);
+}
+.hover\:bg-gold\/20:hover {
+  background-color: rgba(212, 168, 83, 0.2);
+}
+.hover\:border-border:hover {
+  border-color: var(--border);
+}
+.hover\:border-border-bright:hover {
+  border-color: var(--border-bright);
+}
+.hover\:border-gold:hover {
+  border-color: var(--gold);
 }
