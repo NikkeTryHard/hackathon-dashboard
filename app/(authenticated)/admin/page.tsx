@@ -124,7 +124,7 @@ export default function AdminPage() {
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className="mb-5 p-4 bg-surface-0 rounded-lg border border-border-dim">
             <label className="block text-sm text-text-tertiary mb-2">Friend&apos;s name</label>
             <div className="flex gap-3">
-              <input type="text" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} placeholder="e.g. Dave" className="input flex-1" autoFocus />
+              <input type="text" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} placeholder="e.g. Dave" className="input-field flex-1" autoFocus />
               <button onClick={handleCreateUser} disabled={!newUserName.trim()} className="btn-primary disabled:opacity-50">
                 Create
               </button>
