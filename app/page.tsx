@@ -22,8 +22,8 @@ export default function Home() {
 
   // Show loading while checking auth
   return (
-    <div className="min-h-screen flex items-center justify-center bg-dark-bg">
-      <div className="w-8 h-8 border-2 border-neon-green/30 border-t-neon-green rounded-full animate-spin" />
+    <div className="min-h-screen flex items-center justify-center bg-void">
+      <div className="w-8 h-8 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
     </div>
   );
 }

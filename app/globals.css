@@ -68,27 +68,6 @@ body {
   font-family: "JetBrains Mono", "SF Mono", monospace;
 }
 
-.neon-green {
-  color: var(--neon-green);
-  text-shadow:
-    0 0 10px var(--neon-green),
-    0 0 20px var(--neon-green);
-}
-
-.neon-purple {
-  color: var(--neon-purple);
-  text-shadow:
-    0 0 10px var(--neon-purple),
-    0 0 20px var(--neon-purple);
-}
-
-.neon-cyan {
-  color: var(--neon-cyan);
-  text-shadow:
-    0 0 10px var(--neon-cyan),
-    0 0 20px var(--neon-cyan);
-}
-
 /* Surface Hierarchy - 3 levels of depth */
 .surface-base {
   background: var(--surface-0);
