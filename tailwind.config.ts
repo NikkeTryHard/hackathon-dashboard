@@ -8,7 +8,10 @@ const config: Config = {
         neon: { green: "#00ff00", purple: "#9945ff", cyan: "#00ffff" },
         dark: { bg: "#0a0a0a", card: "#111111", border: "#1a1a1a" },
       },
-      fontFamily: { mono: ["JetBrains Mono", "Fira Code", "monospace"] },
+      fontFamily: {
+        sans: ["Geist", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        mono: ["JetBrains Mono", "SF Mono", "monospace"],
+      },
       animation: {
         "pulse-slow": "pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite",
         glow: "glow 2s ease-in-out infinite alternate",

@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -12,9 +14,22 @@
 }
 
 body {
-  background-color: var(--dark-bg);
-  color: #e0e0e0;
-  font-family: "JetBrains Mono", "Fira Code", monospace;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family:
+    "Geist",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  min-height: 100vh;
+}
+
+.font-display {
+  font-family: "Geist", sans-serif;
+}
+
+.font-mono {
+  font-family: "JetBrains Mono", "SF Mono", monospace;
 }
 
 .neon-green {
