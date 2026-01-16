@@ -1,88 +1,125 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Key, Plus, Shield } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Key, Plus, Shield, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { UserKeyCard } from "@/components/UserKeyCard";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 
-// Mock data - replace with your backend API
-const MOCK_USERS = [
-  {
-    id: "1",
-    name: "Louis",
-    apiKey: "sk-hackathon-louis-abc123def456",
-    requests: 387,
-    createdAt: "2 days ago",
-  },
-  {
-    id: "2",
-    name: "Alice",
-    apiKey: "sk-hackathon-alice-xyz789ghi012",
-    requests: 423,
-    createdAt: "2 days ago",
-  },
-  {
-    id: "3",
-    name: "Bob",
-    apiKey: "sk-hackathon-bob-jkl345mno678",
-    requests: 153,
-    createdAt: "1 day ago",
-  },
-  {
-    id: "4",
-    name: "Charlie",
-    apiKey: "sk-hackathon-charlie-pqr901stu234",
-    requests: 284,
-    createdAt: "1 day ago",
-  },
-];
+interface UserData {
+  id: string;
+  name: string;
+  apiKey: string;
+  requests: number;
+  createdAt: string;
+}
 
 export default function AdminPage() {
-  const { user, isLoading } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const router = useRouter();
-  const [users, setUsers] = useState(MOCK_USERS);
+  const [users, setUsers] = useState<UserData[]>([]);
   const [newUserName, setNewUserName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Get raw API key from localStorage
+  const getRawApiKey = () => {
+    const rawKey = localStorage.getItem("hackathon-raw-key");
+    if (rawKey) return rawKey;
+
+    const stored = localStorage.getItem("hackathon-user");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      return parsed.apiKey || "";
+    }
+    return "";
+  };
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      setError(null);
+      const apiKey = getRawApiKey();
+      const res = await fetch("/api/users", {
+        headers: { "x-api-key": apiKey },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch users");
+      }
+
+      const data = await res.json();
+      setUsers(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load users");
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!authLoading && !user) {
       router.push("/login");
       return;
     }
-    if (!isLoading && user && !user.isAdmin) {
+    if (!authLoading && user && !user.isAdmin) {
       router.push("/");
+      return;
     }
-  }, [user, isLoading, router]);
+    if (user?.isAdmin) {
+      fetchUsers();
+    }
+  }, [user, authLoading, router, fetchUsers]);
 
-  if (isLoading || !user || !user.isAdmin) return null;
+  if (authLoading || !user || !user.isAdmin) return null;
 
-  const generateKey = () => {
-    const safeName = newUserName.toLowerCase().replace(/[^a-z0-9]/g, "");
-    const randomPart = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
-    return `sk-hackathon-${safeName}-${randomPart}`;
-  };
-
-  const handleCreateUser = () => {
+  const handleCreateUser = async () => {
     if (!newUserName.trim()) return;
 
-    const newUser = {
-      id: Date.now().toString(),
-      name: newUserName,
-      apiKey: generateKey(),
-      requests: 0,
-      createdAt: "just now",
-    };
+    try {
+      setError(null);
+      const apiKey = getRawApiKey();
+      const res = await fetch("/api/users", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": apiKey,
+        },
+        body: JSON.stringify({ name: newUserName }),
+      });
 
-    setUsers([...users, newUser]);
-    setNewUserName("");
-    setIsCreating(false);
+      if (!res.ok) {
+        throw new Error("Failed to create user");
+      }
+
+      const newUser = await res.json();
+      setUsers([newUser, ...users]);
+      setNewUserName("");
+      setIsCreating(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to create user");
+    }
   };
 
-  const handleDeleteUser = (id: string) => {
-    if (confirm("Are you sure? This will revoke their access.")) {
+  const handleDeleteUser = async (id: string) => {
+    if (!confirm("Are you sure? This will revoke their access.")) return;
+
+    try {
+      setError(null);
+      const apiKey = getRawApiKey();
+      const res = await fetch(`/api/users/${id}`, {
+        method: "DELETE",
+        headers: { "x-api-key": apiKey },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to delete user");
+      }
+
       setUsers(users.filter((u) => u.id !== id));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete user");
     }
   };
 
@@ -102,6 +139,8 @@ export default function AdminPage() {
         <p className="text-sm text-text-tertiary">Manage API keys for your hackathon crew.</p>
       </motion.div>
 
+      {error && <div className="p-4 bg-error/10 border border-error/20 rounded-lg text-error text-sm">{error}</div>}
+
       {/* Add user section */}
       <div className="surface-elevated p-5 border-info/20">
         <div className="flex items-center justify-between mb-5">
@@ -109,12 +148,17 @@ export default function AdminPage() {
             <Key className="w-4 h-4 text-info" />
             API Keys
           </h3>
-          {!isCreating && (
-            <button onClick={() => setIsCreating(true)} className="btn-primary text-sm">
-              <Plus className="w-4 h-4" />
-              Add User
+          <div className="flex gap-2">
+            <button onClick={fetchUsers} className="btn-ghost text-sm" title="Refresh">
+              <RefreshCw className="w-4 h-4" />
             </button>
-          )}
+            {!isCreating && (
+              <button onClick={() => setIsCreating(true)} className="btn-primary text-sm">
+                <Plus className="w-4 h-4" />
+                Add User
+              </button>
+            )}
+          </div>
         </div>
 
         {isCreating && (
@@ -138,11 +182,18 @@ export default function AdminPage() {
           </motion.div>
         )}
 
-        <div className="space-y-3">
-          {users.map((u) => (
-            <UserKeyCard key={u.id} user={u} onDelete={u.id !== user.id ? handleDeleteUser : undefined} />
-          ))}
-        </div>
+        {isLoadingUsers ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="w-6 h-6 border-2 border-gold/30 border-t-gold rounded-full animate-spin" />
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {users.map((u) => (
+              <UserKeyCard key={u.id} user={u} onDelete={u.id !== user.id ? () => handleDeleteUser(u.id) : undefined} />
+            ))}
+            {users.length === 0 && <div className="text-center py-8 text-text-tertiary">No users yet. Click &quot;Add User&quot; to create one.</div>}
+          </div>
+        )}
       </div>
 
       {/* Info */}
@@ -163,7 +214,7 @@ export default function AdminPage() {
           </li>
           <li className="flex items-start gap-2">
             <span className="text-gold">4.</span>
-            <span>Usage is tracked per key in your backend</span>
+            <span>Usage is tracked per key automatically</span>
           </li>
         </ul>
       </div>

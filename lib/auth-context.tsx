@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const userData = await res.json();
       setUser(userData);
       localStorage.setItem("hackathon-user", JSON.stringify(userData));
+      localStorage.setItem("hackathon-raw-key", apiKey);
       return true;
     } catch {
       return false;
@@ -58,6 +59,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = () => {
     setUser(null);
     localStorage.removeItem("hackathon-user");
+    localStorage.removeItem("hackathon-raw-key");
     router.push("/login");
   };
 
