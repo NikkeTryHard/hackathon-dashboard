@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
 import { Sidebar } from "@/components/Sidebar";
+import { PresenceProvider } from "@/components/PresenceProvider";
 import { useAuth } from "@/lib/auth-context";
 
 export default function AuthenticatedLayout({ children }: { children: React.ReactNode }) {
@@ -27,10 +28,10 @@ export default function AuthenticatedLayout({ children }: { children: React.Reac
   if (!user) return null;
 
   return (
-    <>
+    <PresenceProvider>
       <Navbar />
       <Sidebar />
       <main className="ml-56 mt-14 p-6 min-h-screen">{children}</main>
-    </>
+    </PresenceProvider>
   );
 }
