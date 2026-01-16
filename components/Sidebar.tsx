@@ -35,19 +35,6 @@ export function Sidebar() {
           );
         })}
       </nav>
-
-      {/* Online section */}
-      <div className="p-4 border-t border-border-dim">
-        <div className="surface-base p-3">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="status-online" />
-            <span className="text-[11px] font-medium text-text-tertiary uppercase tracking-widest">Online</span>
-          </div>
-          <div className="flex -space-x-2" id="online-avatars">
-            {/* Populated by client */}
-          </div>
-        </div>
-      </div>
     </aside>
   );
 }
