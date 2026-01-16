@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Trophy } from "lucide-react";
 import { motion } from "framer-motion";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
+import { getRawApiKey } from "@/lib/api-utils";
 
 interface LeaderboardEntry {
   id: string;
@@ -14,20 +15,6 @@ interface LeaderboardEntry {
   modelsUsed: string[];
   lastActive: string;
 }
-
-// Get raw API key from localStorage
-const getRawApiKey = () => {
-  if (typeof window === "undefined") return "";
-  const rawKey = localStorage.getItem("hackathon-raw-key");
-  if (rawKey) return rawKey;
-
-  const stored = localStorage.getItem("hackathon-user");
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    return parsed.apiKey || "";
-  }
-  return "";
-};
 
 export default function LeaderboardPage() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
