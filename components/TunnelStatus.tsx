@@ -56,40 +56,40 @@ export function TunnelStatus() {
 
   if (!status) {
     return (
-      <div className="card p-4 animate-pulse">
-        <div className="h-4 bg-dark-border rounded w-1/3 mb-2" />
-        <div className="h-8 bg-dark-border rounded w-full" />
+      <div className="surface-elevated p-5 animate-pulse">
+        <div className="h-4 bg-surface-1 rounded w-1/3 mb-3" />
+        <div className="h-10 bg-surface-1 rounded w-full" />
       </div>
     );
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className={`card p-4 border ${status.running ? "border-neon-green/30 bg-neon-green/5" : "border-yellow-500/30 bg-yellow-500/5"}`}>
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <Radio className={`w-4 h-4 ${status.running ? "text-neon-green" : "text-yellow-500"}`} />
-          <span className="font-mono text-sm">{status.running ? "API Tunnel Active" : "Tunnel Connecting..."}</span>
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className={`surface-elevated p-5 ${status.running ? "border-success/20 bg-success/[0.02]" : "border-warning/20 bg-warning/[0.02]"}`}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2.5">
+          <Radio className={`w-4 h-4 ${status.running ? "text-success" : "text-warning"}`} />
+          <span className="font-mono text-sm text-text-primary">{status.running ? "API Tunnel Active" : "Tunnel Connecting..."}</span>
         </div>
-        <button onClick={handleRestart} disabled={isRestarting} className="p-1.5 rounded hover:bg-dark-border transition-colors disabled:opacity-50" title="Restart tunnel">
-          <RefreshCw className={`w-4 h-4 text-gray-500 ${isRestarting ? "animate-spin" : ""}`} />
+        <button onClick={handleRestart} disabled={isRestarting} className="p-2 rounded-lg hover:bg-surface-1 transition-colors disabled:opacity-50" title="Restart tunnel">
+          <RefreshCw className={`w-4 h-4 text-text-ghost ${isRestarting ? "animate-spin" : ""}`} />
         </button>
       </div>
 
       {status.url ? (
-        <div className="flex items-center gap-2 p-2 bg-dark-bg rounded-lg font-mono text-sm">
-          <code className="flex-1 text-neon-green truncate">{status.url}</code>
-          <button onClick={handleCopy} className="p-1.5 rounded hover:bg-dark-border transition-colors flex-shrink-0">
-            {copied ? <Check className="w-4 h-4 text-neon-green" /> : <Copy className="w-4 h-4 text-gray-500" />}
+        <div className="flex items-center gap-2 p-3 bg-surface-0 rounded-lg border border-border-dim font-mono text-sm">
+          <code className="flex-1 text-gold truncate">{status.url}</code>
+          <button onClick={handleCopy} className="p-2 rounded-lg hover:bg-surface-1 transition-colors flex-shrink-0">
+            {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-text-ghost" />}
           </button>
         </div>
       ) : (
-        <div className="flex items-center gap-2 text-yellow-500 text-sm">
+        <div className="flex items-center gap-2 text-warning text-sm">
           <AlertCircle className="w-4 h-4" />
           <span>Waiting for tunnel URL...</span>
         </div>
       )}
 
-      <p className="text-xs text-gray-500 mt-2">Use this URL in your Claude Code config for API access</p>
+      <p className="text-xs text-text-ghost mt-3">Use this URL in your Claude Code config for API access</p>
     </motion.div>
   );
 }
