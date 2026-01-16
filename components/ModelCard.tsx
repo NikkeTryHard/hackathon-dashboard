@@ -11,27 +11,31 @@ interface ModelCardProps {
 
 const providerConfig = {
   claude: {
-    color: "neon-purple",
-    bgColor: "bg-neon-purple/10",
-    borderColor: "border-neon-purple/30",
+    bgColor: "bg-info/5",
+    borderColor: "border-info/15",
+    hoverBorder: "hover:border-info/30",
+    iconColor: "text-info",
     icon: Brain,
   },
   gemini: {
-    color: "neon-cyan",
-    bgColor: "bg-neon-cyan/10",
-    borderColor: "border-neon-cyan/30",
+    bgColor: "bg-gold/5",
+    borderColor: "border-gold/15",
+    hoverBorder: "hover:border-gold/30",
+    iconColor: "text-gold",
     icon: Sparkles,
   },
   gpt: {
-    color: "neon-green",
-    bgColor: "bg-neon-green/10",
-    borderColor: "border-neon-green/30",
+    bgColor: "bg-success/5",
+    borderColor: "border-success/15",
+    hoverBorder: "hover:border-success/30",
+    iconColor: "text-success",
     icon: Zap,
   },
   other: {
-    color: "gray-400",
-    bgColor: "bg-gray-400/10",
-    borderColor: "border-gray-400/30",
+    bgColor: "bg-surface-1",
+    borderColor: "border-border-dim",
+    hoverBorder: "hover:border-border",
+    iconColor: "text-text-ghost",
     icon: Cpu,
   },
 };
@@ -43,10 +47,12 @@ export function ModelCard({ id, provider, index }: ModelCardProps) {
   if (id.includes("*")) return null;
 
   return (
-    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.02 }} className={`card p-3 border ${config.borderColor} ${config.bgColor} hover:scale-[1.02] transition-transform cursor-default`}>
+    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.02, duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className={`surface-base p-4 ${config.bgColor} ${config.borderColor} ${config.hoverBorder} transition-all cursor-default`}>
       <div className="flex items-center gap-3">
-        <Icon className={`w-4 h-4 text-${config.color}`} />
-        <span className="font-mono text-sm truncate">{id}</span>
+        <div className={`p-1.5 rounded-md bg-surface-0/50 ${config.iconColor}`}>
+          <Icon className="w-4 h-4" />
+        </div>
+        <span className="font-mono text-sm text-text-primary truncate">{id}</span>
       </div>
     </motion.div>
   );
