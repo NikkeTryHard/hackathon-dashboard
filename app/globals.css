@@ -5,16 +5,50 @@
 @tailwind utilities;
 
 :root {
-  --neon-green: #00ff00;
-  --neon-purple: #9945ff;
-  --neon-cyan: #00ffff;
-  --dark-bg: #0a0a0a;
-  --dark-card: #111111;
-  --dark-border: #1a1a1a;
+  /* Luxury Terminal - Deep Obsidian Base */
+  --void: #050506;
+  --surface-0: #0a0a0b;
+  --surface-1: #111113;
+  --surface-2: #1a1a1d;
+
+  /* Borders */
+  --border-dim: #1f1f23;
+  --border: #2a2a2f;
+  --border-bright: #3a3a42;
+
+  /* Text Hierarchy */
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1a6;
+  --text-tertiary: #636369;
+  --text-ghost: #3a3a42;
+
+  /* Refined Gold Accent */
+  --gold: #d4a853;
+  --gold-bright: #e8c06a;
+  --gold-dim: #9a7b3d;
+  --gold-glow: rgba(212, 168, 83, 0.15);
+  --gold-subtle: rgba(212, 168, 83, 0.08);
+
+  /* Semantic */
+  --success: #3ecf8e;
+  --success-dim: rgba(62, 207, 142, 0.15);
+  --error: #ef5f5f;
+  --error-dim: rgba(239, 95, 95, 0.15);
+  --info: #6b8afd;
+  --info-dim: rgba(107, 138, 253, 0.15);
+
+  /* Legacy mappings for compatibility */
+  --bg-primary: var(--void);
+  --bg-elevated: var(--surface-0);
+  --bg-surface: var(--surface-1);
+  --border-subtle: var(--border-dim);
+  --border-default: var(--border);
+  --accent: var(--gold);
+  --accent-dim: var(--gold-dim);
 }
 
 body {
-  background-color: var(--bg-primary);
+  background-color: var(--void);
   color: var(--text-primary);
   font-family:
     "Geist",
