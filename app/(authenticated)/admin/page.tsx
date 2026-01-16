@@ -90,28 +90,30 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-8 max-w-3xl">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}>
+      <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="space-y-1">
         <div className="flex items-center gap-3">
-          <Shield className="w-6 h-6 text-neon-purple" />
-          <h1 className="text-2xl font-bold">
-            <span className="text-gray-500">~/</span>
-            <span className="neon-green">admin</span>
+          <div className="p-2 rounded-lg bg-info/10 border border-info/20">
+            <Shield className="w-5 h-5 text-info" />
+          </div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            <span className="text-text-ghost">~/</span>
+            <span className="text-gold">admin</span>
           </h1>
         </div>
-        <p className="text-sm text-gray-500 mt-1">Manage API keys for your hackathon crew.</p>
+        <p className="text-sm text-text-tertiary">Manage API keys for your hackathon crew.</p>
       </motion.div>
 
       {/* Add user section */}
-      <div className="card p-4 border border-neon-purple/30">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold flex items-center gap-2">
-            <Key className="w-4 h-4 text-neon-purple" />
+      <div className="surface-elevated p-5 border-info/20">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="font-semibold flex items-center gap-2 text-text-primary">
+            <Key className="w-4 h-4 text-info" />
             API Keys
           </h3>
           {!isCreating && (
-            <button onClick={() => setIsCreating(true)} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neon-green/10 border border-neon-green/30 text-neon-green text-sm hover:bg-neon-green/20 transition-colors">
+            <button onClick={() => setIsCreating(true)} className="btn-primary text-sm">
               <Plus className="w-4 h-4" />
               Add User
             </button>
@@ -119,11 +121,11 @@ export default function AdminPage() {
         </div>
 
         {isCreating && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mb-4 p-4 bg-dark-bg rounded-lg">
-            <label className="block text-sm text-gray-400 mb-2">Friend&apos;s name</label>
-            <div className="flex gap-2">
-              <input type="text" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} placeholder="e.g. Dave" className="flex-1 bg-dark-card border border-dark-border rounded-lg py-2 px-3 text-sm font-mono focus:outline-none focus:border-neon-green transition-colors" autoFocus />
-              <button onClick={handleCreateUser} disabled={!newUserName.trim()} className="px-4 py-2 rounded-lg bg-neon-green/20 text-neon-green text-sm hover:bg-neon-green/30 transition-colors disabled:opacity-50">
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className="mb-5 p-4 bg-surface-0 rounded-lg border border-border-dim">
+            <label className="block text-sm text-text-tertiary mb-2">Friend&apos;s name</label>
+            <div className="flex gap-3">
+              <input type="text" value={newUserName} onChange={(e) => setNewUserName(e.target.value)} placeholder="e.g. Dave" className="input flex-1" autoFocus />
+              <button onClick={handleCreateUser} disabled={!newUserName.trim()} className="btn-primary disabled:opacity-50">
                 Create
               </button>
               <button
@@ -131,7 +133,7 @@ export default function AdminPage() {
                   setIsCreating(false);
                   setNewUserName("");
                 }}
-                className="px-4 py-2 rounded-lg bg-dark-card text-gray-400 text-sm hover:bg-dark-border transition-colors"
+                className="px-4 py-2 rounded-lg bg-surface-1 border border-border text-text-secondary text-sm hover:bg-surface-2 transition-colors"
               >
                 Cancel
               </button>
@@ -147,13 +149,25 @@ export default function AdminPage() {
       </div>
 
       {/* Info */}
-      <div className="card p-4 border border-dark-border">
-        <h3 className="font-bold mb-2 text-sm">How it works</h3>
-        <ul className="text-sm text-gray-400 space-y-1">
-          <li>* Create a key for each friend</li>
-          <li>* Share the key with them (securely!)</li>
-          <li>* They use it to login here and configure Claude Code</li>
-          <li>* Usage is tracked per key in your backend</li>
+      <div className="surface-elevated p-5">
+        <h3 className="font-semibold mb-3 text-text-primary">How it works</h3>
+        <ul className="text-sm text-text-tertiary space-y-2">
+          <li className="flex items-start gap-2">
+            <span className="text-gold">1.</span>
+            <span>Create a key for each friend</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-gold">2.</span>
+            <span>Share the key with them (securely!)</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-gold">3.</span>
+            <span>They use it to login here and configure Claude Code</span>
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-gold">4.</span>
+            <span>Usage is tracked per key in your backend</span>
+          </li>
         </ul>
       </div>
     </div>
