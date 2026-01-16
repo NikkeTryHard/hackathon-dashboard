@@ -59,13 +59,9 @@ export default function AdminPage() {
   if (isLoading || !user || !user.isAdmin) return null;
 
   const generateKey = () => {
-    const chars = "abcdefghijklmnopqrstuvwxyz0123456789";
-    let result = "sk-hackathon-";
-    result += newUserName.toLowerCase() + "-";
-    for (let i = 0; i < 12; i++) {
-      result += chars[Math.floor(Math.random() * chars.length)];
-    }
-    return result;
+    const safeName = newUserName.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const randomPart = crypto.randomUUID().replace(/-/g, "").slice(0, 12);
+    return `sk-hackathon-${safeName}-${randomPart}`;
   };
 
   const handleCreateUser = () => {

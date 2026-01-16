@@ -36,7 +36,8 @@ export function usePresence() {
         clearInterval(intervalRef.current);
       }
       // Best effort offline signal
-      navigator.sendBeacon?.("/api/presence", JSON.stringify({ userId: user.id, offline: true }));
+      const blob = new Blob([JSON.stringify({ userId: user.id, offline: true })], { type: "application/json" });
+      navigator.sendBeacon?.("/api/presence", blob);
     };
   }, [user]);
 }
