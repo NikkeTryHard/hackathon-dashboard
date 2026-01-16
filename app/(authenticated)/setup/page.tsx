@@ -11,8 +11,8 @@ export default function SetupPage() {
     <div className="space-y-8 max-w-3xl">
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="space-y-1">
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-info/10 border border-info/20">
-            <BookOpen className="w-5 h-5 text-info" />
+          <div className="p-2 rounded-lg bg-gold/10 border border-gold/20">
+            <BookOpen className="w-5 h-5 text-gold" />
           </div>
           <h1 className="text-2xl font-semibold tracking-tight">
             <span className="text-text-ghost">~/</span>
