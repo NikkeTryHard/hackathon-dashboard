@@ -7,6 +7,7 @@ import { StatsCard } from "@/components/StatsCard";
 import { OnlineFriends } from "@/components/OnlineFriends";
 import { QuickLeaderboard } from "@/components/QuickLeaderboard";
 import { useAuth } from "@/lib/auth-context";
+import { getRawApiKey } from "@/lib/api-utils";
 
 interface Stats {
   totalRequests: number;
@@ -23,20 +24,6 @@ interface LeaderboardEntry {
   topModel: string;
   lastActive: string;
 }
-
-// Get raw API key from localStorage
-const getRawApiKey = () => {
-  if (typeof window === "undefined") return "";
-  const rawKey = localStorage.getItem("hackathon-raw-key");
-  if (rawKey) return rawKey;
-
-  const stored = localStorage.getItem("hackathon-user");
-  if (stored) {
-    const parsed = JSON.parse(stored);
-    return parsed.apiKey || "";
-  }
-  return "";
-};
 
 export default function DashboardPage() {
   const { user } = useAuth();
