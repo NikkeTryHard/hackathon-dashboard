@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { safeJsonParse } from "@/lib/api-utils";
 
 interface User {
   id: string;
@@ -30,7 +31,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queueMicrotask(() => {
       const stored = localStorage.getItem("hackathon-user");
       if (stored) {
-        setUser(JSON.parse(stored));
+        setUser(safeJsonParse<User | null>(stored, null));
       }
       setIsLoading(false);
     });
