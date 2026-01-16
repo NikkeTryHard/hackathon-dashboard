@@ -1,44 +1,13 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Cpu, Sparkles, Zap, Brain } from "lucide-react";
+import { providerConfig, ProviderType } from "@/lib/provider-config";
 
 interface ModelCardProps {
   id: string;
-  provider: "claude" | "gemini" | "gpt" | "other";
+  provider: ProviderType;
   index: number;
 }
-
-const providerConfig = {
-  claude: {
-    bgColor: "bg-info/5",
-    borderColor: "border-info/15",
-    hoverBorder: "hover:border-info/30",
-    iconColor: "text-info",
-    icon: Brain,
-  },
-  gemini: {
-    bgColor: "bg-gold/5",
-    borderColor: "border-gold/15",
-    hoverBorder: "hover:border-gold/30",
-    iconColor: "text-gold",
-    icon: Sparkles,
-  },
-  gpt: {
-    bgColor: "bg-success/5",
-    borderColor: "border-success/15",
-    hoverBorder: "hover:border-success/30",
-    iconColor: "text-success",
-    icon: Zap,
-  },
-  other: {
-    bgColor: "bg-surface-1",
-    borderColor: "border-border-dim",
-    hoverBorder: "hover:border-border",
-    iconColor: "text-text-ghost",
-    icon: Cpu,
-  },
-};
 
 export function ModelCard({ id, provider, index }: ModelCardProps) {
   const config = providerConfig[provider];

@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Cpu, RefreshCw, Brain, Sparkles, Zap } from "lucide-react";
+import { Cpu, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { ModelCard } from "@/components/ModelCard";
+import { providerConfig, ProviderType } from "@/lib/provider-config";
 
 interface Model {
   id: string;
@@ -11,7 +12,7 @@ interface Model {
   owned_by: string;
 }
 
-function getProvider(modelId: string): "claude" | "gemini" | "gpt" | "other" {
+function getProvider(modelId: string): ProviderType {
   if (modelId.startsWith("claude")) return "claude";
   if (modelId.startsWith("gemini")) return "gemini";
   if (modelId.startsWith("gpt") || modelId.startsWith("o1") || modelId.startsWith("o3")) return "gpt";
@@ -51,13 +52,6 @@ export default function ModelsPage() {
     },
     {} as Record<string, Model[]>,
   );
-
-  const providerInfo = {
-    claude: { label: "Anthropic Claude", icon: Brain, color: "text-info" },
-    gemini: { label: "Google Gemini", icon: Sparkles, color: "text-gold" },
-    gpt: { label: "OpenAI GPT", icon: Zap, color: "text-success" },
-    other: { label: "Other", icon: Cpu, color: "text-text-ghost" },
-  };
 
   return (
     <div className="space-y-8">
@@ -99,14 +93,14 @@ export default function ModelsPage() {
             const providerModels = grouped[provider] || [];
             if (providerModels.length === 0) return null;
 
-            const info = providerInfo[provider];
-            const Icon = info.icon;
+            const config = providerConfig[provider];
+            const Icon = config.icon;
 
             return (
               <motion.div key={provider} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.4 }}>
                 <div className="flex items-center gap-3 mb-4">
-                  <Icon className={`w-5 h-5 ${info.color}`} />
-                  <h2 className="text-lg font-semibold text-text-primary">{info.label}</h2>
+                  <Icon className={`w-5 h-5 ${config.color}`} />
+                  <h2 className="text-lg font-semibold text-text-primary">{config.label}</h2>
                   <span className="badge">{providerModels.length}</span>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
