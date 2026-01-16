@@ -40,3 +40,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 .worktrees/
+
+/lib/generated/prisma
+
+# SQLite database
+prisma/hackathon.db
+prisma/hackathon.db-journal
