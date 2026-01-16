@@ -7,7 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 import { cn } from "@/lib/utils";
 
 const navItems = [
-  { href: "/", icon: LayoutDashboard, label: "Dashboard" },
+  { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/leaderboard", icon: Trophy, label: "Leaderboard" },
   { href: "/setup", icon: BookOpen, label: "Setup Guide" },
   { href: "/models", icon: Cpu, label: "Models" },
@@ -22,7 +22,7 @@ export function Sidebar() {
   const items = user?.isAdmin ? [...navItems, ...adminItems] : navItems;
 
   return (
-    <aside className="fixed left-0 top-14 bottom-0 w-56 bg-dark-card border-r border-dark-border p-4">
+    <aside className="fixed left-0 top-14 bottom-0 w-56 bg-dark-card border-r border-dark-border p-4 z-50">
       <nav className="space-y-2">
         {items.map((item) => {
           const isActive = pathname === item.href;

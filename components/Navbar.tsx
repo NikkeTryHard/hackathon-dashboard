@@ -7,7 +7,7 @@ export function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 h-14 bg-dark-card border-b border-dark-border z-50 flex items-center justify-between px-6">
+    <nav className="fixed top-0 left-56 right-0 h-14 bg-dark-card border-b border-dark-border z-40 flex items-center justify-between px-6">
       <div className="flex items-center gap-3">
         <Terminal className="w-6 h-6 text-neon-green" />
         <span className="font-mono text-lg">
