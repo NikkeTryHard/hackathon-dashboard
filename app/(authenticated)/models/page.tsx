@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Cpu, RefreshCw } from "lucide-react";
 import { motion } from "framer-motion";
 import { ModelCard } from "@/components/ModelCard";
@@ -24,11 +24,11 @@ export default function ModelsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchModels = async () => {
+  const fetchModels = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://127.0.0.1:8083/v1/models");
+      const res = await fetch("/api/models");
       if (!res.ok) throw new Error("Failed to fetch models");
       const data = await res.json();
       setModels(data.data || []);
@@ -37,11 +37,11 @@ export default function ModelsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchModels();
-  }, []);
+  }, [fetchModels]);
 
   const grouped = models.reduce(
     (acc, model) => {

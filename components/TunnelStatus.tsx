@@ -27,7 +27,10 @@ export function TunnelStatus() {
   }, []);
 
   useEffect(() => {
-    fetchStatus();
+    // Use queueMicrotask to avoid synchronous setState warning from React Compiler
+    queueMicrotask(() => {
+      void fetchStatus();
+    });
 
     let interval: NodeJS.Timeout | null = null;
 
@@ -68,7 +71,7 @@ export function TunnelStatus() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
-  }, [status?.url]);
+  }, [status]);
 
   if (!status) {
     return (

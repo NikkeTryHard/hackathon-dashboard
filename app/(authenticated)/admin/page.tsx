@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Key, Plus, Shield, RefreshCw } from "lucide-react";
+import { Key, Plus, Shield, RefreshCw, Pencil } from "lucide-react";
 import { motion } from "framer-motion";
 import { UserKeyCard } from "@/components/UserKeyCard";
+import { EditUserModal } from "@/components/EditUserModal";
+import { DeleteConfirmModal } from "@/components/DeleteConfirmModal";
+import { SettingsSection } from "@/components/SettingsSection";
 import { useAuth } from "@/lib/auth-context";
 import { useRouter } from "next/navigation";
 import { getRawApiKey } from "@/lib/api-utils";
@@ -14,6 +17,7 @@ interface UserData {
   apiKey: string;
   requests: number;
   createdAt: string;
+  isAdmin?: boolean;
 }
 
 export default function AdminPage() {
@@ -24,6 +28,10 @@ export default function AdminPage() {
   const [isCreating, setIsCreating] = useState(false);
   const [isLoadingUsers, setIsLoadingUsers] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [editingUser, setEditingUser] = useState<UserData | null>(null);
+  const [deletingUser, setDeletingUser] = useState<UserData | null>(null);
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [isLoadingSettings, setIsLoadingSettings] = useState(true);
 
   const fetchUsers = useCallback(async () => {
     try {
@@ -46,6 +54,33 @@ export default function AdminPage() {
     }
   }, []);
 
+  const fetchSettings = useCallback(async () => {
+    try {
+      const apiKey = getRawApiKey();
+      const res = await fetch("/api/settings", {
+        headers: { "x-api-key": apiKey },
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch settings");
+      }
+
+      const data = await res.json();
+      // Convert array to object for easier access
+      const settingsObj: Record<string, string> = {};
+      if (Array.isArray(data)) {
+        data.forEach((s: { key: string; value: string }) => {
+          settingsObj[s.key] = s.value;
+        });
+      }
+      setSettings(settingsObj);
+    } catch (err) {
+      console.error("Failed to load settings:", err);
+    } finally {
+      setIsLoadingSettings(false);
+    }
+  }, []);
+
   useEffect(() => {
     if (!authLoading && !user) {
       router.push("/login");
@@ -57,12 +92,11 @@ export default function AdminPage() {
     }
     if (user?.isAdmin) {
       fetchUsers();
+      fetchSettings();
     }
-  }, [user, authLoading, router, fetchUsers]);
+  }, [user, authLoading, router, fetchUsers, fetchSettings]);
 
-  if (authLoading || !user || !user.isAdmin) return null;
-
-  const handleCreateUser = async () => {
+  const handleCreateUser = useCallback(async () => {
     if (!newUserName.trim()) return;
 
     try {
@@ -88,28 +122,106 @@ export default function AdminPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to create user");
     }
-  };
+  }, [newUserName, users]);
 
-  const handleDeleteUser = async (id: string) => {
-    if (!confirm("Are you sure? This will revoke their access.")) return;
+  const handleDeleteUser = useCallback(
+    async (id: string) => {
+      try {
+        setError(null);
+        const apiKey = getRawApiKey();
+        const res = await fetch(`/api/users/${id}`, {
+          method: "DELETE",
+          headers: { "x-api-key": apiKey },
+        });
 
-    try {
-      setError(null);
-      const apiKey = getRawApiKey();
-      const res = await fetch(`/api/users/${id}`, {
-        method: "DELETE",
-        headers: { "x-api-key": apiKey },
-      });
+        if (!res.ok) {
+          throw new Error("Failed to delete user");
+        }
 
-      if (!res.ok) {
-        throw new Error("Failed to delete user");
+        setUsers(users.filter((u) => u.id !== id));
+        setDeletingUser(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to delete user");
       }
+    },
+    [users],
+  );
 
-      setUsers(users.filter((u) => u.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete user");
+  const handleEditUser = useCallback(
+    async (updatedUser: { id: string; name: string; isAdmin: boolean }) => {
+      try {
+        setError(null);
+        const apiKey = getRawApiKey();
+        const res = await fetch(`/api/users/${updatedUser.id}`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": apiKey,
+          },
+          body: JSON.stringify({ name: updatedUser.name, isAdmin: updatedUser.isAdmin }),
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to update user");
+        }
+
+        const data = await res.json();
+        setUsers(users.map((u) => (u.id === updatedUser.id ? { ...u, name: data.name, isAdmin: data.isAdmin } : u)));
+        setEditingUser(null);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to update user");
+      }
+    },
+    [users],
+  );
+
+  const handleRegenerateKey = useCallback(
+    async (userId: string) => {
+      try {
+        setError(null);
+        const apiKey = getRawApiKey();
+        const res = await fetch(`/api/users/${userId}/regenerate`, {
+          method: "POST",
+          headers: { "x-api-key": apiKey },
+        });
+
+        if (!res.ok) {
+          throw new Error("Failed to regenerate API key");
+        }
+
+        const data = await res.json();
+        setUsers(users.map((u) => (u.id === userId ? { ...u, apiKey: data.apiKey } : u)));
+        // Update editingUser if it's the same user
+        if (editingUser?.id === userId) {
+          setEditingUser({ ...editingUser, apiKey: data.apiKey });
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to regenerate API key");
+      }
+    },
+    [users, editingUser],
+  );
+
+  const handleSaveSettings = useCallback(async (key: string, value: string) => {
+    const apiKey = getRawApiKey();
+    const res = await fetch("/api/settings", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+      },
+      body: JSON.stringify({ key, value }),
+    });
+
+    if (!res.ok) {
+      throw new Error("Failed to save settings");
     }
-  };
+
+    // Update local state
+    setSettings((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  if (authLoading || !user || !user.isAdmin) return null;
 
   return (
     <div className="space-y-8 max-w-3xl">
@@ -177,7 +289,13 @@ export default function AdminPage() {
         ) : (
           <div className="space-y-3">
             {users.map((u) => (
-              <UserKeyCard key={u.id} user={u} onDelete={u.id !== user.id ? () => handleDeleteUser(u.id) : undefined} />
+              <div key={u.id} className="relative">
+                <UserKeyCard user={u} onDelete={u.id !== user.id ? () => setDeletingUser(u) : undefined} />
+                {/* Edit button overlay */}
+                <button onClick={() => setEditingUser(u)} className="absolute top-4 right-12 p-2 rounded-lg hover:bg-surface-1 text-text-ghost hover:text-text-secondary transition-colors" title="Edit user">
+                  <Pencil className="w-4 h-4" />
+                </button>
+              </div>
             ))}
             {users.length === 0 && <div className="text-center py-8 text-text-tertiary">No users yet. Click &quot;Add User&quot; to create one.</div>}
           </div>
@@ -206,6 +324,15 @@ export default function AdminPage() {
           </li>
         </ul>
       </div>
+
+      {/* Settings Section */}
+      <SettingsSection settings={settings} onSave={handleSaveSettings} isLoading={isLoadingSettings} />
+
+      {/* Edit User Modal */}
+      {editingUser && <EditUserModal user={{ id: editingUser.id, name: editingUser.name, isAdmin: editingUser.isAdmin ?? false }} currentUserId={user.id} onClose={() => setEditingUser(null)} onSave={handleEditUser} onRegenerateKey={handleRegenerateKey} />}
+
+      {/* Delete Confirm Modal */}
+      {deletingUser && <DeleteConfirmModal userName={deletingUser.name} onConfirm={() => handleDeleteUser(deletingUser.id)} onCancel={() => setDeletingUser(null)} />}
     </div>
   );
 }
