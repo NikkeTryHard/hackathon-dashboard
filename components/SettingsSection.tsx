@@ -2,7 +2,7 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Settings, Save, Loader2, Check, ExternalLink } from "lucide-react";
+import { Settings, Save, Loader2, Check } from "lucide-react";
 import { fadeInUp } from "@/lib/animations";
 
 interface SettingsSectionProps {
@@ -11,27 +11,28 @@ interface SettingsSectionProps {
   isLoading: boolean;
 }
 
+const DEFAULT_PORT = "8083";
+
 export function SettingsSection({ settings, onSave, isLoading }: SettingsSectionProps) {
-  const [antigravityUrl, setAntigravityUrl] = useState(settings.antigravity_url || "");
+  const [port, setPort] = useState(settings.antigravity_port || DEFAULT_PORT);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   // Update local state when settings prop changes
   useEffect(() => {
-    setAntigravityUrl(settings.antigravity_url || "");
-  }, [settings.antigravity_url]);
+    setPort(settings.antigravity_port || DEFAULT_PORT);
+  }, [settings.antigravity_port]);
 
-  const hasChanges = antigravityUrl !== (settings.antigravity_url || "");
+  const hasChanges = port !== (settings.antigravity_port || DEFAULT_PORT);
 
   const handleSave = useCallback(async () => {
     if (!hasChanges) return;
 
-    // Basic URL validation
-    try {
-      new URL(antigravityUrl);
-    } catch {
-      setError("Please enter a valid URL");
+    // Validate port number
+    const portNum = parseInt(port, 10);
+    if (isNaN(portNum) || portNum < 1 || portNum > 65535) {
+      setError("Please enter a valid port number (1-65535)");
       return;
     }
 
@@ -40,7 +41,7 @@ export function SettingsSection({ settings, onSave, isLoading }: SettingsSection
     setSaveSuccess(false);
 
     try {
-      await onSave("antigravity_url", antigravityUrl);
+      await onSave("antigravity_port", port);
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 2000);
     } catch (err) {
@@ -48,7 +49,7 @@ export function SettingsSection({ settings, onSave, isLoading }: SettingsSection
     } finally {
       setIsSaving(false);
     }
-  }, [antigravityUrl, hasChanges, onSave]);
+  }, [port, hasChanges, onSave]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
@@ -74,13 +75,10 @@ export function SettingsSection({ settings, onSave, isLoading }: SettingsSection
 
       {/* Settings Form */}
       <div className="space-y-6">
-        {/* Antigravity URL Setting */}
+        {/* Antigravity Port Setting */}
         <div>
-          <label htmlFor="antigravity-url" className="flex items-center gap-2 text-xs font-medium text-text-tertiary uppercase tracking-widest mb-2">
-            Antigravity Endpoint URL
-            <a href={antigravityUrl || "#"} target="_blank" rel="noopener noreferrer" className={`p-1 rounded hover:bg-surface-1 transition-colors ${!antigravityUrl ? "opacity-50 pointer-events-none" : ""}`} title="Open URL in new tab">
-              <ExternalLink className="w-3 h-3" />
-            </a>
+          <label htmlFor="antigravity-port" className="block text-xs font-medium text-text-tertiary uppercase tracking-widest mb-2">
+            Antigravity Port
           </label>
 
           {isLoading ? (
@@ -89,18 +87,21 @@ export function SettingsSection({ settings, onSave, isLoading }: SettingsSection
               <span className="text-text-ghost">Loading settings...</span>
             </div>
           ) : (
-            <div className="flex gap-3">
+            <div className="flex gap-3 items-center">
+              <span className="text-text-secondary">http://127.0.0.1:</span>
               <input
-                id="antigravity-url"
-                type="url"
-                value={antigravityUrl}
+                id="antigravity-port"
+                type="number"
+                min="1"
+                max="65535"
+                value={port}
                 onChange={(e) => {
-                  setAntigravityUrl(e.target.value);
+                  setPort(e.target.value);
                   setError(null);
                 }}
                 onKeyDown={handleKeyDown}
-                placeholder="https://api.antigravity.example.com"
-                className="input-field flex-1"
+                placeholder="8083"
+                className="input-field w-24"
               />
               <button onClick={handleSave} disabled={!hasChanges || isSaving} className={`px-4 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${saveSuccess ? "bg-success text-void" : hasChanges ? "btn-primary" : "bg-surface-1 text-text-ghost cursor-not-allowed"}`}>
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : saveSuccess ? <Check className="w-4 h-4" /> : <Save className="w-4 h-4" />}
@@ -111,7 +112,7 @@ export function SettingsSection({ settings, onSave, isLoading }: SettingsSection
 
           {error && <p className="mt-2 text-sm text-error">{error}</p>}
 
-          <p className="mt-2 text-xs text-text-ghost">The base URL for the Antigravity API endpoint. This URL will be used for all proxy requests.</p>
+          <p className="mt-2 text-xs text-text-ghost">The port number for the local Antigravity API endpoint.</p>
         </div>
       </div>
     </motion.div>

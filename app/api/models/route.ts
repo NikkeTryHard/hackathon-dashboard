@@ -1,14 +1,14 @@
 import { NextResponse } from "next/server";
 import { getSetting } from "@/lib/settings";
 
-const DEFAULT_ANTIGRAVITY_URL = "http://127.0.0.1:8083";
+const DEFAULT_ANTIGRAVITY_PORT = "8083";
 
 // GET /api/models - Proxy to Antigravity /v1/models endpoint
 export async function GET() {
   try {
-    const antigravityUrl = await getSetting("antigravity_url", DEFAULT_ANTIGRAVITY_URL);
+    const port = await getSetting("antigravity_port", DEFAULT_ANTIGRAVITY_PORT);
 
-    const modelsUrl = `${antigravityUrl}/v1/models`;
+    const modelsUrl = `http://127.0.0.1:${port}/v1/models`;
 
     const response = await fetch(modelsUrl, {
       method: "GET",
