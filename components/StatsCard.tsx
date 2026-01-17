@@ -1,8 +1,10 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import { motion } from "framer-motion";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fadeInUp, delayedTransition } from "@/lib/animations";
 
 interface StatsCardProps {
   icon: LucideIcon;
@@ -36,11 +38,12 @@ const colorConfig = {
   },
 };
 
-export function StatsCard({ icon: Icon, label, value, subtext, color = "gold", delay = 0 }: StatsCardProps) {
+function StatsCardComponent({ icon: Icon, label, value, subtext, color = "gold", delay = 0 }: StatsCardProps) {
   const config = colorConfig[color];
+  const transition = useMemo(() => delayedTransition(delay), [delay]);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay, duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className={cn("surface-elevated p-5 hover:border-border-bright transition-colors", config.border)}>
+    <motion.div initial={fadeInUp.initial} animate={fadeInUp.animate} transition={transition} className={cn("surface-elevated p-5 hover:border-border-bright transition-colors", config.border)}>
       <div className="flex items-center gap-3 mb-4">
         <div className={cn("p-2 rounded-lg", config.iconBg)}>
           <Icon className={cn("w-4 h-4", config.iconColor)} />
@@ -52,3 +55,5 @@ export function StatsCard({ icon: Icon, label, value, subtext, color = "gold", d
     </motion.div>
   );
 }
+
+export const StatsCard = memo(StatsCardComponent);

@@ -7,7 +7,7 @@ export function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <nav className="fixed top-0 left-56 right-0 h-14 bg-surface-0/90 backdrop-blur-md border-b border-border-dim z-40 flex items-center justify-between px-6">
+    <nav className="fixed top-0 left-56 right-0 h-14 bg-surface-0 border-b border-border-dim z-40 flex items-center justify-between px-6">
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gold/10 border border-gold/20">
           <Hexagon className="w-4 h-4 text-gold" />

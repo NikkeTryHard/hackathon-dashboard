@@ -1,19 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Radio, Copy, Check, AlertCircle } from "lucide-react";
+import { fadeInUpSmall } from "@/lib/animations";
+import { TUNNEL_POLL_INTERVAL } from "@/lib/constants";
 
 interface TunnelStatusData {
   running: boolean;
   url: string | null;
 }
 
+// TunnelStatus manages its own state and takes no props, so memo provides no benefit
 export function TunnelStatus() {
   const [status, setStatus] = useState<TunnelStatusData | null>(null);
   const [copied, setCopied] = useState(false);
 
-  const fetchStatus = async () => {
+  const fetchStatus = useCallback(async () => {
     try {
       const res = await fetch("/api/tunnel");
       const data = await res.json();
@@ -21,21 +24,51 @@ export function TunnelStatus() {
     } catch (err) {
       console.error("Failed to fetch tunnel status:", err);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchStatus();
-    const interval = setInterval(fetchStatus, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
-  const handleCopy = async () => {
+    let interval: NodeJS.Timeout | null = null;
+
+    const startPolling = () => {
+      if (!interval) {
+        interval = setInterval(fetchStatus, TUNNEL_POLL_INTERVAL);
+      }
+    };
+
+    const stopPolling = () => {
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+      }
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        fetchStatus(); // Fetch immediately when visible
+        startPolling();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    startPolling();
+
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [fetchStatus]);
+
+  const handleCopy = useCallback(async () => {
     if (status?.url) {
       await navigator.clipboard.writeText(status.url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
-  };
+  }, [status?.url]);
 
   if (!status) {
     return (
@@ -47,7 +80,7 @@ export function TunnelStatus() {
   }
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className={`surface-elevated p-5 ${status.running ? "border-success/20 bg-success/[0.02]" : "border-warning/20 bg-warning/[0.02]"}`}>
+    <motion.div {...fadeInUpSmall} className={`surface-elevated p-5 ${status.running ? "border-success/20 bg-success/[0.02]" : "border-warning/20 bg-warning/[0.02]"}`}>
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2.5">
           <Radio className={`w-4 h-4 ${status.running ? "text-success" : "text-warning"}`} />

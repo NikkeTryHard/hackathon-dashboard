@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { Activity, Zap, Cpu, Clock } from "lucide-react";
 import { motion } from "framer-motion";
+import { fadeInDown } from "@/lib/animations";
 import { StatsCard } from "@/components/StatsCard";
 import { OnlineFriends } from "@/components/OnlineFriends";
 import { QuickLeaderboard } from "@/components/QuickLeaderboard";
@@ -31,6 +32,8 @@ export default function DashboardPage() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // getRawApiKey reads from localStorage on each call, so no dependencies needed.
+  // This callback is intentionally stable to prevent unnecessary effect re-runs.
   const fetchData = useCallback(async () => {
     try {
       const apiKey = getRawApiKey();
@@ -59,17 +62,21 @@ export default function DashboardPage() {
   }, [fetchData]);
 
   // Transform leaderboard for OnlineFriends component (show recent activity as "online")
-  const friends = leaderboard.map((entry) => ({
-    id: entry.id,
-    name: entry.name,
-    isOnline: entry.lastActive === "just now" || entry.lastActive.includes("min"),
-    lastSeen: entry.lastActive === "Never" ? undefined : entry.lastActive,
-  }));
+  const friends = useMemo(
+    () =>
+      leaderboard.map((entry) => ({
+        id: entry.id,
+        name: entry.name,
+        isOnline: entry.lastActive === "just now" || entry.lastActive.includes("min"),
+        lastSeen: entry.lastActive === "Never" ? undefined : entry.lastActive,
+      })),
+    [leaderboard],
+  );
 
   return (
     <div className="space-y-8">
       {/* Header */}
-      <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} className="space-y-1">
+      <motion.div {...fadeInDown} className="space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight">
           <span className="text-text-ghost">~/</span>
           <span className="text-gold">dashboard</span>

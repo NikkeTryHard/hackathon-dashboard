@@ -22,7 +22,7 @@ export function Sidebar() {
   const items = user?.isAdmin ? [...navItems, ...adminItems] : navItems;
 
   return (
-    <aside className="fixed left-0 top-14 bottom-0 w-56 bg-surface-0/60 backdrop-blur-sm border-r border-border-dim z-50 flex flex-col">
+    <aside className="fixed left-0 top-14 bottom-0 w-56 bg-surface-0 border-r border-border-dim z-50 flex flex-col">
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-1">
         {items.map((item) => {

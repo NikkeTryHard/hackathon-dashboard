@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { memo } from "react";
 import { Trophy, Zap } from "lucide-react";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ interface QuickLeaderboardProps {
   entries: LeaderboardEntry[];
 }
 
-export function QuickLeaderboard({ entries }: QuickLeaderboardProps) {
+function QuickLeaderboardComponent({ entries }: QuickLeaderboardProps) {
   const getRankStyle = (rank: number) => {
     if (rank === 1) return "bg-gold/15 text-gold border-gold/25";
     if (rank === 2) return "bg-surface-2 text-text-secondary border-border";
@@ -38,8 +38,8 @@ export function QuickLeaderboard({ entries }: QuickLeaderboardProps) {
       </div>
 
       <div className="space-y-2">
-        {entries.slice(0, 5).map((entry, i) => (
-          <motion.div key={entry.name} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className="flex items-center justify-between p-3 rounded-lg bg-surface-0 border border-border-dim hover:border-border transition-colors">
+        {entries.slice(0, 5).map((entry) => (
+          <div key={entry.name} className="flex items-center justify-between p-3 rounded-lg bg-surface-0 border border-border-dim hover:border-border transition-colors">
             <div className="flex items-center gap-3">
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold border ${getRankStyle(entry.rank)}`}>{entry.rank}</div>
               <div>
@@ -51,9 +51,11 @@ export function QuickLeaderboard({ entries }: QuickLeaderboardProps) {
               <Zap className="w-3.5 h-3.5" />
               <span className="text-sm font-mono font-medium">{entry.requests.toLocaleString()}</span>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
   );
 }
+
+export const QuickLeaderboard = memo(QuickLeaderboardComponent);

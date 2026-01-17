@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { motion } from "framer-motion";
+import { useState, memo, useCallback } from "react";
 import { Copy, Check, Eye, EyeOff, Trash2 } from "lucide-react";
 
 interface UserKeyCardProps {
@@ -15,20 +14,20 @@ interface UserKeyCardProps {
   onDelete?: (id: string) => void;
 }
 
-export function UserKeyCard({ user, onDelete }: UserKeyCardProps) {
+function UserKeyCardComponent({ user, onDelete }: UserKeyCardProps) {
   const [showKey, setShowKey] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = async () => {
+  const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(user.apiKey);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  }, [user.apiKey]);
 
   const maskedKey = user.apiKey.slice(0, 12) + "..." + user.apiKey.slice(-4);
 
   return (
-    <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className="surface-base p-4">
+    <div className="surface-base p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-info/15 border border-info/20 flex items-center justify-center text-lg font-bold text-info">{user.name[0]}</div>
@@ -55,6 +54,8 @@ export function UserKeyCard({ user, onDelete }: UserKeyCardProps) {
           {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-text-ghost" />}
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 }
+
+export const UserKeyCard = memo(UserKeyCardComponent);

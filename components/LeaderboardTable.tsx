@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { memo } from "react";
 import { Zap, Crown, Medal } from "lucide-react";
 
 interface LeaderboardEntry {
@@ -16,7 +16,7 @@ interface LeaderboardTableProps {
   entries: LeaderboardEntry[];
 }
 
-export function LeaderboardTable({ entries }: LeaderboardTableProps) {
+function LeaderboardTableComponent({ entries }: LeaderboardTableProps) {
   const getRankDisplay = (rank: number) => {
     if (rank === 1) return <Crown className="w-5 h-5 text-gold" />;
     if (rank === 2) return <Medal className="w-5 h-5 text-text-secondary" />;
@@ -38,8 +38,8 @@ export function LeaderboardTable({ entries }: LeaderboardTableProps) {
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry, i) => (
-            <motion.tr key={entry.name} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05, duration: 0.3, ease: [0.23, 1, 0.32, 1] }} className={`border-b border-border-dim hover:bg-surface-1/50 transition-colors ${entry.rank === 1 ? "bg-gold/[0.03]" : ""}`}>
+          {entries.map((entry) => (
+            <tr key={entry.name} className={`border-b border-border-dim hover:bg-surface-1/50 transition-colors ${entry.rank === 1 ? "bg-gold/[0.03]" : ""}`}>
               <td className="px-5 py-4">{getRankDisplay(entry.rank)}</td>
               <td className="px-5 py-4">
                 <div className="flex items-center gap-3">
@@ -67,10 +67,12 @@ export function LeaderboardTable({ entries }: LeaderboardTableProps) {
                 </div>
               </td>
               <td className="px-5 py-4 text-sm text-text-ghost">{entry.lastActive}</td>
-            </motion.tr>
+            </tr>
           ))}
         </tbody>
       </table>
     </div>
   );
 }
+
+export const LeaderboardTable = memo(LeaderboardTableComponent);
