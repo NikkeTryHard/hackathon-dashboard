@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Allow zrok tunnel for dev
-  allowedDevOrigins: ["https://hackathoncrew.share.zrok.io"],
+  // Allow tunnels for dev
+  allowedDevOrigins: ["https://hackathoncrew.share.zrok.io", "*.trycloudflare.com"],
 };
 
 export default nextConfig;

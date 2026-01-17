@@ -1,5 +1,5 @@
 import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
-import { PrismaClient } from "./generated/prisma";
+import { PrismaClient } from "./generated/prisma/client";
 
 // Create the SQLite adapter with file path
 const adapter = new PrismaBetterSqlite3({
