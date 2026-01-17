@@ -7,11 +7,18 @@ import { providerConfig, ProviderType } from "@/lib/provider-config";
 
 // Static list of available models
 const AVAILABLE_MODELS = [
-  { id: "claude-sonnet-4-5-20250514", object: "model", owned_by: "antigravity" },
-  { id: "gemini-2.5-pro", object: "model", owned_by: "antigravity" },
-  { id: "gpt-4.1", object: "model", owned_by: "antigravity" },
-  { id: "o3", object: "model", owned_by: "antigravity" },
-  { id: "o4-mini", object: "model", owned_by: "antigravity" },
+  // Claude
+  { id: "claude-sonnet-4-5", object: "model", owned_by: "antigravity" },
+  { id: "claude-sonnet-4-5-thinking", object: "model", owned_by: "antigravity" },
+  { id: "claude-opus-4-5-thinking", object: "model", owned_by: "antigravity" },
+  // Gemini
+  { id: "gemini-3-flash", object: "model", owned_by: "antigravity" },
+  { id: "gemini-3-pro-high", object: "model", owned_by: "antigravity" },
+  { id: "gemini-3-pro-low", object: "model", owned_by: "antigravity" },
+  { id: "gemini-3-pro-image", object: "model", owned_by: "antigravity" },
+  { id: "gemini-2.5-flash", object: "model", owned_by: "antigravity" },
+  { id: "gemini-2.5-flash-lite", object: "model", owned_by: "antigravity" },
+  { id: "gemini-2.5-flash-thinking", object: "model", owned_by: "antigravity" },
 ];
 
 interface Model {
