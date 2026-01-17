@@ -1,8 +1,8 @@
-import { PrismaBetterSQLite3 } from "@prisma/adapter-better-sqlite3";
-import { PrismaClient } from "../lib/generated/prisma";
+import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient } from "../lib/generated/prisma/client.js";
 
 // Create adapter for seed script
-const adapter = new PrismaBetterSQLite3({
+const adapter = new PrismaBetterSqlite3({
   url: "file:./prisma/hackathon.db",
 });
 
