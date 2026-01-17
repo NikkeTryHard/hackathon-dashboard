@@ -1,36 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { authenticateApiKey } from "@/lib/auth";
+import { trackRequestSchema, validateBody } from "@/lib/validation";
 
 // POST /api/track - Track a request made through the proxy
 export async function POST(req: NextRequest) {
   try {
-    const apiKey = req.headers.get("x-api-key");
-
-    if (!apiKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { apiKey },
+    const { user, error } = await authenticateApiKey(req, {
+      rateLimitType: "api",
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
-    }
+    if (error) return error;
 
     const body = await req.json();
-    const { model, tokens } = body;
+    const validation = validateBody(trackRequestSchema, body);
 
-    if (!model) {
-      return NextResponse.json({ error: "Model is required" }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    // Create request record
+    const { model, tokens } = validation.data;
+
     const request = await prisma.request.create({
       data: {
-        userId: user.id,
-        model: model,
-        tokens: typeof tokens === "number" && tokens >= 0 ? Math.floor(tokens) : 0,
+        userId: user!.id,
+        model,
+        tokens,
       },
     });
 
@@ -39,7 +34,7 @@ export async function POST(req: NextRequest) {
       requestId: request.id,
     });
   } catch (error) {
-    console.error("Track request error:", error);
+    console.error("Track request error:", error instanceof Error ? error.message : "Unknown");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -47,23 +42,15 @@ export async function POST(req: NextRequest) {
 // GET /api/track - Get user's own request history
 export async function GET(req: NextRequest) {
   try {
-    const apiKey = req.headers.get("x-api-key");
-
-    if (!apiKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { apiKey },
+    const { user, error } = await authenticateApiKey(req, {
+      rateLimitType: "read",
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
-    }
+    if (error) return error;
 
     // Get user's requests (last 100)
     const requests = await prisma.request.findMany({
-      where: { userId: user.id },
+      where: { userId: user!.id },
       orderBy: { createdAt: "desc" },
       take: 100,
       select: {
@@ -74,14 +61,13 @@ export async function GET(req: NextRequest) {
       },
     });
 
-    // Get summary stats
     const totalRequests = await prisma.request.count({
-      where: { userId: user.id },
+      where: { userId: user!.id },
     });
 
     const modelCounts = await prisma.request.groupBy({
       by: ["model"],
-      where: { userId: user.id },
+      where: { userId: user!.id },
       _count: { model: true },
       orderBy: { _count: { model: "desc" } },
     });
@@ -95,7 +81,7 @@ export async function GET(req: NextRequest) {
       recentRequests: requests,
     });
   } catch (error) {
-    console.error("Get requests error:", error);
+    console.error("Get requests error:", error instanceof Error ? error.message : "Unknown");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

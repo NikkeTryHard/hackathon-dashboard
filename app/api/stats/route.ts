@@ -1,32 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { authenticateApiKey } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   try {
-    const apiKey = req.headers.get("x-api-key");
-
-    if (!apiKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { apiKey },
+    const { user: _user, error } = await authenticateApiKey(req, {
+      rateLimitType: "read",
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "Invalid API key" }, { status: 401 });
-    }
+    if (error) return error;
 
     // Get total requests
     const totalRequests = await prisma.request.count();
 
-    // Get active users today (users who made requests in last 24h)
+    // Get active users today
     const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const activeToday = await prisma.request.groupBy({
       by: ["userId"],
-      where: {
-        createdAt: { gte: oneDayAgo },
-      },
+      where: { createdAt: { gte: oneDayAgo } },
     });
 
     // Get top model
@@ -49,7 +40,7 @@ export async function GET(req: NextRequest) {
       totalUsers,
     });
   } catch (error) {
-    console.error("Stats error:", error);
+    console.error("Stats error:", error instanceof Error ? error.message : "Unknown");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

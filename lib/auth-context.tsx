@@ -7,7 +7,7 @@ import { safeJsonParse } from "@/lib/api-utils";
 interface User {
   id: string;
   name: string;
-  apiKey: string;
+  apiKey: string; // This is now just the masked prefix
   isAdmin: boolean;
 }
 
@@ -26,15 +26,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Use a microtask to avoid synchronous setState in effect body
-    // This satisfies the react-hooks/set-state-in-effect rule
-    queueMicrotask(() => {
-      const stored = localStorage.getItem("hackathon-user");
-      if (stored) {
-        setUser(safeJsonParse<User | null>(stored, null));
+    // Check for existing session via sessionStorage instead of localStorage
+    // The session cookie will be sent automatically
+    const checkSession = async () => {
+      try {
+        const stored = sessionStorage.getItem("hackathon-user");
+        if (stored) {
+          setUser(safeJsonParse<User | null>(stored, null));
+        }
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    });
+    };
+    checkSession();
   }, []);
 
   const login = async (apiKey: string): Promise<boolean> => {
@@ -43,14 +47,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ apiKey }),
+        credentials: "include", // Include cookies
       });
 
       if (!res.ok) return false;
 
       const userData = await res.json();
       setUser(userData);
-      localStorage.setItem("hackathon-user", JSON.stringify(userData));
-      localStorage.setItem("hackathon-raw-key", apiKey);
+
+      // Store in sessionStorage (clears on browser close) instead of localStorage
+      // Don't store the raw API key at all
+      sessionStorage.setItem("hackathon-user", JSON.stringify(userData));
+
       return true;
     } catch {
       return false;
@@ -59,8 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("hackathon-user");
-    localStorage.removeItem("hackathon-raw-key");
+    sessionStorage.removeItem("hackathon-user");
+    // Clear the session cookie by calling logout endpoint
+    fetch("/api/auth/logout", { method: "POST", credentials: "include" }).catch(() => {});
     router.push("/login");
   };
 

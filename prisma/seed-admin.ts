@@ -11,26 +11,33 @@ const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Generate admin API key
-  const louisKey = generateApiKey("louis");
-  const prefix = getKeyPrefix(louisKey);
-  const hash = await hashApiKey(louisKey);
+  const adminKey = generateApiKey("admin");
+  const prefix = getKeyPrefix(adminKey);
+  const hash = await hashApiKey(adminKey);
 
-  // Create Louis as admin
-  const louis = await prisma.user.upsert({
+  // Create or update admin user
+  const admin = await prisma.user.upsert({
     where: { apiKeyPrefix: prefix },
     update: {},
     create: {
-      name: "Louis",
+      name: "Admin",
       apiKeyPrefix: prefix,
       apiKeyHash: hash,
       isAdmin: true,
     },
   });
 
-  console.log("Created user:", louis);
+  console.log("=".repeat(60));
+  console.log("ADMIN USER CREATED");
+  console.log("=".repeat(60));
+  console.log(`Name: ${admin.name}`);
+  console.log(`ID: ${admin.id}`);
   console.log("");
-  console.log("API KEY (save this, it cannot be recovered):");
-  console.log(`  ${louisKey}`);
+  console.log("YOUR ADMIN API KEY (save this, it cannot be recovered):");
+  console.log("");
+  console.log(`  ${adminKey}`);
+  console.log("");
+  console.log("=".repeat(60));
 }
 
 main()

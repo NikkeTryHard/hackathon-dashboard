@@ -8,14 +8,17 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  name      String
-  apiKey    String   @unique
-  isAdmin   Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(cuid())
+  name         String
+  apiKeyPrefix String   @unique // First 16 chars for lookup
+  apiKeyHash   String   // Argon2 hash of full key
+  isAdmin      Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  requests  Request[]
+  requests Request[]
+
+  @@index([apiKeyPrefix])
 }
 
 model Request {
@@ -25,7 +28,10 @@ model Request {
   tokens    Int      @default(0)
   createdAt DateTime @default(now())
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
 }
 
 model SystemSetting {

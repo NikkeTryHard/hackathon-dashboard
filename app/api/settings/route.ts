@@ -1,28 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
 import { getAllSettings, setSetting } from "@/lib/settings";
+import { authenticateApiKey } from "@/lib/auth";
+import { z } from "zod";
+import { validateBody } from "@/lib/validation";
+
+// Settings schema for validation
+const settingsUpdateSchema = z.object({
+  key: z.string().min(1, "Key is required").max(100, "Key too long"),
+  value: z.string().min(0).max(1000, "Value too long"),
+});
 
 // GET /api/settings - List all settings (authenticated users only)
 export async function GET(req: NextRequest) {
   try {
-    const apiKey = req.headers.get("x-api-key");
-
-    if (!apiKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { apiKey },
+    const { error } = await authenticateApiKey(req, {
+      rateLimitType: "read",
     });
 
-    if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (error) return error;
 
     const settings = await getAllSettings();
     return NextResponse.json(settings);
   } catch (error) {
-    console.error("Get settings error:", error);
+    console.error("Get settings error:", error instanceof Error ? error.message : "Unknown");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -30,35 +30,25 @@ export async function GET(req: NextRequest) {
 // PUT /api/settings - Update a setting (admin only)
 export async function PUT(req: NextRequest) {
   try {
-    const apiKey = req.headers.get("x-api-key");
-
-    if (!apiKey) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { apiKey },
+    const { error } = await authenticateApiKey(req, {
+      requireAdmin: true,
+      rateLimitType: "admin",
     });
 
-    if (!user?.isAdmin) {
-      return NextResponse.json({ error: "Admin access required" }, { status: 403 });
-    }
+    if (error) return error;
 
     const body = await req.json();
-    const { key, value } = body;
+    const validation = validateBody(settingsUpdateSchema, body);
 
-    if (!key || typeof key !== "string") {
-      return NextResponse.json({ error: "Key is required and must be a string" }, { status: 400 });
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
     }
 
-    if (value === undefined || typeof value !== "string") {
-      return NextResponse.json({ error: "Value is required and must be a string" }, { status: 400 });
-    }
-
+    const { key, value } = validation.data;
     const setting = await setSetting(key, value);
     return NextResponse.json(setting);
   } catch (error) {
-    console.error("Update setting error:", error);
+    console.error("Update setting error:", error instanceof Error ? error.message : "Unknown");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

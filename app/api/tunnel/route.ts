@@ -1,7 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { tunnelManager } from "@/lib/tunnel-manager";
-import { cookies } from "next/headers";
-import { prisma } from "@/lib/prisma";
+import { authenticateCookie } from "@/lib/auth";
+import { tunnelActionSchema, validateBody } from "@/lib/validation";
+import { rateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 let initialized = false;
 
@@ -12,34 +13,46 @@ function ensureInitialized() {
   }
 }
 
-export async function GET() {
-  ensureInitialized();
-  const status = tunnelManager.getStatus();
-  return NextResponse.json(status);
+// GET - Requires authentication now
+export async function GET(_req: NextRequest) {
+  try {
+    const { error } = await authenticateCookie();
+    if (error) return error;
+
+    ensureInitialized();
+    const status = tunnelManager.getStatus();
+    return NextResponse.json(status);
+  } catch (error) {
+    console.error("Tunnel GET error:", error instanceof Error ? error.message : "Unknown");
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
 
-export async function POST(req: Request) {
-  // Admin-only: verify user is admin before allowing restart
-  const cookieStore = await cookies();
-  const userId = cookieStore.get("userId")?.value;
+// POST - Admin only
+export async function POST(req: NextRequest) {
+  try {
+    const { user, error } = await authenticateCookie({ requireAdmin: true });
+    if (error) return error;
 
-  if (!userId) {
-    return NextResponse.json({ error: "Unauthorized - login required" }, { status: 401 });
+    // Rate limit admin actions by user ID
+    const limit = await rateLimit(user!.id, "admin");
+    if (!limit.success) return rateLimitResponse(limit.resetMs);
+
+    const body = await req.json();
+    const validation = validateBody(tunnelActionSchema, body);
+
+    if (!validation.success) {
+      return NextResponse.json({ error: validation.error }, { status: 400 });
+    }
+
+    if (validation.data.action === "restart") {
+      tunnelManager.restart();
+      return NextResponse.json({ message: "Restarting tunnel..." });
+    }
+
+    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+  } catch (error) {
+    console.error("Tunnel POST error:", error instanceof Error ? error.message : "Unknown");
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: { isAdmin: true },
-  });
-
-  if (!user?.isAdmin) {
-    return NextResponse.json({ error: "Forbidden - admin access required" }, { status: 403 });
-  }
-
-  const { action } = await req.json();
-  if (action === "restart") {
-    tunnelManager.restart();
-    return NextResponse.json({ message: "Restarting tunnel..." });
-  }
-  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
 }

@@ -10,18 +10,32 @@ export function safeJsonParse<T>(json: string, fallback: T): T {
 }
 
 /**
- * Get raw API key from localStorage for authenticated API calls
+ * Get API key for authenticated API calls
+ * Now prompts user to enter key since we don't store it
  */
 export function getRawApiKey(): string {
   if (typeof window === "undefined") return "";
 
-  const rawKey = localStorage.getItem("hackathon-raw-key");
-  if (rawKey) return rawKey;
+  // Check session for temporary key storage during admin operations
+  const sessionKey = sessionStorage.getItem("hackathon-temp-key");
+  if (sessionKey) return sessionKey;
 
-  const stored = localStorage.getItem("hackathon-user");
-  if (stored) {
-    const parsed = safeJsonParse<{ apiKey?: string }>(stored, {});
-    return parsed.apiKey || "";
+  // Prompt user to enter their API key for admin operations
+  const key = prompt("Enter your API key to perform this action:");
+  if (key) {
+    // Store temporarily for this session
+    sessionStorage.setItem("hackathon-temp-key", key);
+    return key;
   }
+
   return "";
+}
+
+/**
+ * Clear temporary API key from session
+ */
+export function clearTempApiKey(): void {
+  if (typeof window !== "undefined") {
+    sessionStorage.removeItem("hackathon-temp-key");
+  }
 }
