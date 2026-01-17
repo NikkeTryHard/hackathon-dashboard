@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Radio, RefreshCw, Copy, Check, AlertCircle } from "lucide-react";
+import { Radio, Copy, Check, AlertCircle } from "lucide-react";
 
 interface TunnelStatusData {
   running: boolean;
@@ -12,7 +12,6 @@ interface TunnelStatusData {
 export function TunnelStatus() {
   const [status, setStatus] = useState<TunnelStatusData | null>(null);
   const [copied, setCopied] = useState(false);
-  const [isRestarting, setIsRestarting] = useState(false);
 
   const fetchStatus = async () => {
     try {
@@ -38,22 +37,6 @@ export function TunnelStatus() {
     }
   };
 
-  const handleRestart = async () => {
-    setIsRestarting(true);
-    try {
-      await fetch("/api/tunnel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "restart" }),
-      });
-      setTimeout(fetchStatus, 3000);
-    } catch (err) {
-      console.error("Failed to restart tunnel:", err);
-    } finally {
-      setTimeout(() => setIsRestarting(false), 5000);
-    }
-  };
-
   if (!status) {
     return (
       <div className="surface-elevated p-5 animate-pulse">
@@ -70,9 +53,6 @@ export function TunnelStatus() {
           <Radio className={`w-4 h-4 ${status.running ? "text-success" : "text-warning"}`} />
           <span className="font-mono text-sm text-text-primary">{status.running ? "API Tunnel Active" : "Tunnel Connecting..."}</span>
         </div>
-        <button onClick={handleRestart} disabled={isRestarting} className="p-2 rounded-lg hover:bg-surface-1 transition-colors disabled:opacity-50" title="Restart tunnel">
-          <RefreshCw className={`w-4 h-4 text-text-ghost ${isRestarting ? "animate-spin" : ""}`} />
-        </button>
       </div>
 
       {status.url ? (
