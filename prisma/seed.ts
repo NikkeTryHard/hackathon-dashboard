@@ -1,6 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaBetterSQLite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaClient } from "../lib/generated/prisma";
 
-const prisma = new PrismaClient();
+// Create adapter for seed script
+const adapter = new PrismaBetterSQLite3({
+  url: "file:./prisma/hackathon.db",
+});
+
+const prisma = new PrismaClient({ adapter });
 
 async function main() {
   // Create admin user
